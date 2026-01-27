@@ -11,11 +11,16 @@ import { BIBLE_VERSES } from './constantes/versiculos';
 import Cabecalho from './componentes/Cabecalho';
 import ColunaBarbeiro from './componentes/ColunaBarbeiro';
 import Agendamentos from './componentes/Agendamentos';
+import Login from './componentes/Login';
 
-const API_URL = `http://${window.location.hostname}:3000`;
+// Em desenvolvimento (Vite), a API está na porta 3000.
+// Em produção (Railway/Express), a API está na mesma origem (rota relativa).
+const isDev = window.location.port.startsWith('517');
+const API_URL = isDev ? `http://${window.location.hostname}:3000` : '';
 
 function App() {
     // ESTADOS PRINCIPAIS
+    const [isAuthenticated, setIsAuthenticated] = useState(false);
     const [barbers, setBarbers] = useState<Barber[]>([
         { id: '1', name: 'João', commissionRate: 50 },
         { id: '2', name: 'Pedro', commissionRate: 50 }
@@ -297,6 +302,10 @@ function App() {
     const handleNextBarber = () => {
         setSelectedBarberIndex(prev => prev === barbers.length - 1 ? 0 : prev + 1);
     };
+
+    if (!isAuthenticated) {
+        return <Login onLogin={() => setIsAuthenticated(true)} />;
+    }
 
     return (
         <div className="min-h-screen bg-slate-950 text-slate-200 font-sans selection:bg-blue-500/30">
