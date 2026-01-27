@@ -1,0 +1,478 @@
+{
+  "barbers": [
+    {
+      "id": "barber1",
+      "name": "João",
+      "commissionRate": 50
+    },
+    {
+      "id": "barber2",
+      "name": "Cristian ",
+      "commissionRate": 40
+    }
+  ],
+  "servicesState": {
+    "item": {
+      "item": {
+        "item": {
+          "item": {
+            "barber1": [
+              {
+                "id": "corte",
+                "count": 3,
+                "isNavalhado": false,
+                "currentPrice": 40
+              },
+              {
+                "id": "barba",
+                "count": 0,
+                "isNavalhado": false,
+                "currentPrice": 35
+              },
+              {
+                "id": "maquina",
+                "count": 0,
+                "isNavalhado": false,
+                "currentPrice": 35
+              },
+              {
+                "id": "acabamento",
+                "count": 0,
+                "isNavalhado": false,
+                "currentPrice": 15
+              },
+              {
+                "id": "sobrancelha",
+                "count": 1,
+                "isNavalhado": false,
+                "currentPrice": 15
+              },
+              {
+                "id": "combo",
+                "count": 2,
+                "isNavalhado": false,
+                "currentPrice": 70
+              },
+              {
+                "id": "outros",
+                "count": 0,
+                "isNavalhado": false,
+                "currentPrice": 0
+              }
+            ],
+            "barber2": [
+              {
+                "id": "corte",
+                "count": 1,
+                "isNavalhado": false,
+                "currentPrice": 40
+              },
+              {
+                "id": "barba",
+                "count": 1,
+                "isNavalhado": false,
+                "currentPrice": 35
+              },
+              {
+                "id": "maquina",
+                "count": 0,
+                "isNavalhado": false,
+                "currentPrice": 35
+              },
+              {
+                "id": "acabamento",
+                "count": 0,
+                "isNavalhado": false,
+                "currentPrice": 15
+              },
+              {
+                "id": "sobrancelha",
+                "count": 0,
+                "isNavalhado": false,
+                "currentPrice": 15
+              },
+              {
+                "id": "combo",
+                "count": 1,
+                "isNavalhado": false,
+                "currentPrice": 70
+              },
+              {
+                "id": "outros",
+                "count": 0,
+                "isNavalhado": false,
+                "currentPrice": 0
+              }
+            ]
+          },
+          "barber1": [
+            {
+              "id": "corte",
+              "count": 3,
+              "isNavalhado": false,
+              "currentPrice": 40,
+              "selectedPaymentMethod": "pix"
+            },
+            {
+              "id": "barba",
+              "count": 0,
+              "isNavalhado": false,
+              "currentPrice": 35
+            },
+            {
+              "id": "maquina",
+              "count": 0,
+              "isNavalhado": false,
+              "currentPrice": 35
+            },
+            {
+              "id": "acabamento",
+              "count": 0,
+              "isNavalhado": false,
+              "currentPrice": 15
+            },
+            {
+              "id": "sobrancelha",
+              "count": 1,
+              "isNavalhado": false,
+              "currentPrice": 15
+            },
+            {
+              "id": "combo",
+              "count": 2,
+              "isNavalhado": false,
+              "currentPrice": 70
+            },
+            {
+              "id": "outros",
+              "count": 0,
+              "isNavalhado": false,
+              "currentPrice": 0
+            }
+          ]
+        },
+        "barber1": [
+          {
+            "id": "corte",
+            "count": 3,
+            "isNavalhado": false,
+            "currentPrice": 40,
+            "selectedPaymentMethod": "pix"
+          },
+          {
+            "id": "barba",
+            "count": 0,
+            "isNavalhado": false,
+            "currentPrice": 35
+          },
+          {
+            "id": "maquina",
+            "count": 0,
+            "isNavalhado": false,
+            "currentPrice": 35
+          },
+          {
+            "id": "acabamento",
+            "count": 0,
+            "isNavalhado": false,
+            "currentPrice": 15
+          },
+          {
+            "id": "sobrancelha",
+            "count": 1,
+            "isNavalhado": false,
+            "currentPrice": 15
+          },
+          {
+            "id": "combo",
+            "count": 2,
+            "isNavalhado": false,
+            "currentPrice": 70
+          },
+          {
+            "id": "outros",
+            "count": 0,
+            "isNavalhado": false,
+            "currentPrice": 0
+          }
+        ]
+      },
+      "barber1": [
+        {
+          "id": "corte",
+          "count": 3,
+          "isNavalhado": false,
+          "currentPrice": 40,
+          "selectedPaymentMethod": "debito"
+        },
+        {
+          "id": "barba",
+          "count": 0,
+          "isNavalhado": false,
+          "currentPrice": 35
+        },
+        {
+          "id": "maquina",
+          "count": 0,
+          "isNavalhado": false,
+          "currentPrice": 35
+        },
+        {
+          "id": "acabamento",
+          "count": 0,
+          "isNavalhado": false,
+          "currentPrice": 15
+        },
+        {
+          "id": "sobrancelha",
+          "count": 1,
+          "isNavalhado": false,
+          "currentPrice": 15
+        },
+        {
+          "id": "combo",
+          "count": 2,
+          "isNavalhado": false,
+          "currentPrice": 70
+        },
+        {
+          "id": "outros",
+          "count": 0,
+          "isNavalhado": false,
+          "currentPrice": 0
+        }
+      ]
+    },
+    "barber1": [
+      {
+        "id": "corte",
+        "count": 3,
+        "isNavalhado": false,
+        "currentPrice": 40,
+        "selectedPaymentMethod": "dinheiro"
+      },
+      {
+        "id": "barba",
+        "count": 0,
+        "isNavalhado": false,
+        "currentPrice": 35
+      },
+      {
+        "id": "maquina",
+        "count": 0,
+        "isNavalhado": false,
+        "currentPrice": 35
+      },
+      {
+        "id": "acabamento",
+        "count": 0,
+        "isNavalhado": false,
+        "currentPrice": 15
+      },
+      {
+        "id": "sobrancelha",
+        "count": 1,
+        "isNavalhado": false,
+        "currentPrice": 15
+      },
+      {
+        "id": "combo",
+        "count": 2,
+        "isNavalhado": false,
+        "currentPrice": 70
+      },
+      {
+        "id": "outros",
+        "count": 0,
+        "isNavalhado": false,
+        "currentPrice": 0
+      }
+    ]
+  },
+  "history": [
+    {
+      "id": "6db87fdd-201e-4ea6-971c-258ad5380500",
+      "barberId": "barber1",
+      "serviceName": "Corte",
+      "price": 45,
+      "timestamp": "2025-12-15T15:39:19.000Z",
+      "isNavalhado": true
+    },
+    {
+      "id": "e942d683-7833-4ee3-a5d9-56f8a3d589a1",
+      "barberId": "barber2",
+      "serviceName": "Corte",
+      "price": 40,
+      "timestamp": "2025-12-15T15:43:39.000Z",
+      "isNavalhado": false
+    },
+    {
+      "id": "872e5654-3dcb-4312-8a46-9ff3d648dfcf",
+      "barberId": "barber2",
+      "serviceName": "Combo",
+      "price": 70,
+      "timestamp": "2025-12-15T15:43:42.000Z",
+      "isNavalhado": false
+    },
+    {
+      "id": "f3ab06d2-0919-4029-b9c8-7cbd4228b837",
+      "barberId": "barber2",
+      "serviceName": "Barba",
+      "price": 35,
+      "timestamp": "2025-12-15T15:43:50.000Z",
+      "isNavalhado": false
+    },
+    {
+      "id": "b8acf5c1-9943-4560-b25d-f095b9aef9b7",
+      "barberId": "barber1",
+      "serviceName": "Combo",
+      "price": 70,
+      "timestamp": "2025-12-15T15:44:15.000Z",
+      "isNavalhado": false
+    },
+    {
+      "id": "b40fb0b6-311b-4a8b-a92b-82b8b00038bc",
+      "barberId": "barber1",
+      "serviceName": "Combo",
+      "price": 70,
+      "timestamp": "2025-12-15T15:44:15.000Z",
+      "isNavalhado": false
+    },
+    {
+      "id": "f1ee20ed-e5e8-4c7f-b9a6-6a80ddcd0aac",
+      "barberId": "barber1",
+      "serviceName": "Combo",
+      "price": 70,
+      "timestamp": "2025-12-15T15:44:16.000Z",
+      "isNavalhado": false
+    },
+    {
+      "id": "d6c67959-70b9-4033-8a78-bf396603674c",
+      "barberId": "barber1",
+      "serviceName": "Corte",
+      "price": 40,
+      "timestamp": "2025-12-16T16:56:17.360Z",
+      "isNavalhado": false
+    },
+    {
+      "id": "15d71bc0-a908-4dad-851e-a7c73339b368",
+      "barberId": "barber1",
+      "serviceName": "Combo",
+      "price": 70,
+      "timestamp": "2025-12-16T16:56:20.360Z",
+      "isNavalhado": false
+    },
+    {
+      "id": "6333e048-c30a-4c97-9d3c-7f19dc0baed6",
+      "barberId": "barber1",
+      "serviceName": "Corte",
+      "price": 40,
+      "timestamp": "2025-12-16T17:29:42.749Z",
+      "isNavalhado": false
+    },
+    {
+      "id": "f9ae02bf-c12b-42f1-8e3d-e8e71938c333",
+      "barberId": "barber1",
+      "serviceName": "Corte",
+      "price": 45,
+      "timestamp": "2025-12-16T18:21:52.730Z",
+      "isNavalhado": true
+    },
+    {
+      "id": "32aeb642-622c-4b93-a118-d0066a64d4c6",
+      "barberId": "barber1",
+      "serviceName": "Corte",
+      "price": 40,
+      "timestamp": "2025-12-16T19:01:21.280Z",
+      "isNavalhado": false
+    },
+    {
+      "id": "21d50165-288f-489f-9e59-446155c24d5f",
+      "barberId": "barber1",
+      "serviceName": "Combo",
+      "price": 70,
+      "timestamp": "2025-12-16T20:57:03.398Z",
+      "isNavalhado": false
+    },
+    {
+      "id": "0624276f-3cca-4d27-9e6d-590a6ca27de3",
+      "barberId": "barber1",
+      "serviceName": "Sobrancelha",
+      "price": 15,
+      "timestamp": "2025-12-16T20:57:04.398Z",
+      "isNavalhado": false
+    },
+    {
+      "id": "be48b6c9-c807-48d0-aa0c-3c98c0f400d4",
+      "barberId": "barber1",
+      "serviceName": "Corte",
+      "price": 40,
+      "timestamp": "2025-12-17T13:00:22.217Z",
+      "isNavalhado": false
+    },
+    {
+      "id": "1ab9b87c-03ee-4b46-bd34-3286ef794225",
+      "barberId": "barber1",
+      "serviceName": "Corte",
+      "price": 40,
+      "timestamp": "2025-12-17T13:46:16.000Z",
+      "isNavalhado": false
+    },
+    {
+      "id": "245e478d-98da-4bbd-a1ea-d113e8aa4290",
+      "barberId": "barber1",
+      "serviceName": "Corte",
+      "price": 40,
+      "timestamp": "2025-12-17T17:33:56.014Z",
+      "isNavalhado": false
+    },
+    {
+      "id": "a7eee832-80bd-44ae-8fb5-495013eaeb51",
+      "barberId": "barber1",
+      "serviceName": "Corte",
+      "price": 40,
+      "timestamp": "2025-12-17T18:32:13.014Z",
+      "isNavalhado": false
+    },
+    {
+      "id": "c9994a42-3d92-405c-9503-79921a3c93ca",
+      "barberId": "barber1",
+      "serviceName": "Corte",
+      "price": 40,
+      "timestamp": "2025-12-17T20:33:13.014Z",
+      "isNavalhado": false
+    },
+    {
+      "id": "6b85ba9b-fd61-4b05-a730-ece9cab8a571",
+      "barberId": "barber1",
+      "serviceName": "Corte",
+      "price": 40,
+      "timestamp": "2025-12-17T21:10:59.014Z",
+      "isNavalhado": false
+    },
+    {
+      "id": "93436bb8-0cd3-40ef-8922-4a206aa8cb38",
+      "barberId": "barber1",
+      "serviceName": "Corte",
+      "price": 40,
+      "timestamp": "2025-12-17T21:30:35.014Z",
+      "isNavalhado": false
+    },
+    {
+      "id": "e669260b-f64b-42fe-bda0-5a3dcc0a627e",
+      "barberId": "barber1",
+      "serviceName": "Corte",
+      "price": 40,
+      "timestamp": "2025-12-17T21:53:36.014Z",
+      "isNavalhado": false
+    },
+    {
+      "id": "ed7415e8-f110-4cd0-943f-35635ff9defa",
+      "barberId": "barber1",
+      "serviceName": "Corte",
+      "price": 40,
+      "timestamp": "2025-12-17T22:32:13.014Z",
+      "isNavalhado": false
+    }
+  ]
+}
