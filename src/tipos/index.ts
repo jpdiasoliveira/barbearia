@@ -31,3 +31,18 @@ export interface ServiceConfig {
     allowNavalhado: boolean;
     isEditable: boolean;
 }
+
+// Tipos para Agendamentos
+export type AppointmentStatus = 'scheduled' | 'completed' | 'cancelled';
+export type ServiceDuration = 15 | 30 | 45 | 60;
+
+export interface Appointment {
+    id: string;
+    clientName: string;
+    clientPhone: string;
+    barberId: string;
+    serviceType: string;
+    duration: ServiceDuration;
+    scheduledTime: Date;
+    status: AppointmentStatus;
+}

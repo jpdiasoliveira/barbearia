@@ -9,6 +9,9 @@ interface CabecalhoProps {
     onPrevDate: () => void;
     onNextDate: () => void;
     onToday: () => void;
+    currentView: 'services' | 'appointments';
+    onViewChange: (view: 'services' | 'appointments') => void;
+    appointmentCount?: number;
 }
 
 const Cabecalho: React.FC<CabecalhoProps> = ({
@@ -17,6 +20,9 @@ const Cabecalho: React.FC<CabecalhoProps> = ({
     onPrevDate,
     onNextDate,
     onToday,
+    currentView,
+    onViewChange,
+    appointmentCount = 0,
 }) => {
     return (
         <header className="bg-slate-900 border-b border-slate-800 sticky top-0 z-50 shadow-2xl">
@@ -38,6 +44,32 @@ const Cabecalho: React.FC<CabecalhoProps> = ({
                         <p className="text-xs text-blue-400 font-medium italic text-center leading-relaxed">
                             "{versiculo}"
                         </p>
+                    </div>
+
+                    <div className="flex items-center gap-2">
+                        <button
+                            onClick={() => onViewChange('services')}
+                            className={`px-4 py-2 rounded-lg font-medium transition-all ${currentView === 'services'
+                                    ? 'bg-blue-600 text-white shadow-lg shadow-blue-900/30'
+                                    : 'bg-slate-800 text-slate-400 hover:bg-slate-700'
+                                }`}
+                        >
+                            Serviços
+                        </button>
+                        <button
+                            onClick={() => onViewChange('appointments')}
+                            className={`px-4 py-2 rounded-lg font-medium transition-all relative ${currentView === 'appointments'
+                                    ? 'bg-blue-600 text-white shadow-lg shadow-blue-900/30'
+                                    : 'bg-slate-800 text-slate-400 hover:bg-slate-700'
+                                }`}
+                        >
+                            Agendamentos
+                            {appointmentCount > 0 && (
+                                <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center">
+                                    {appointmentCount}
+                                </span>
+                            )}
+                        </button>
                     </div>
 
                     <div className="flex items-center gap-2 self-center md:self-auto">

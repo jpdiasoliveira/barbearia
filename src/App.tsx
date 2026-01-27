@@ -3,13 +3,14 @@ import { v4 as uuidv4 } from 'uuid';
 import { addDays, subDays, startOfDay, isToday } from 'date-fns';
 
 // Tipos e Constantes
-import { Barber, HistoryItem, ServiceState, PaymentMethod } from './tipos';
+import { Barber, HistoryItem, ServiceState, PaymentMethod, Appointment } from './tipos';
 import { INITIAL_SERVICES } from './constantes/servicos';
 import { BIBLE_VERSES } from './constantes/versiculos';
 
 // Componentes
 import Cabecalho from './componentes/Cabecalho';
 import ColunaBarbeiro from './componentes/ColunaBarbeiro';
+import Agendamentos from './componentes/Agendamentos';
 
 const API_URL = `http://${window.location.hostname}:3000`;
 
@@ -23,6 +24,8 @@ function App() {
     const [servicesState, setServicesState] = useState<Record<string, ServiceState[]>>({});
     const [selectedDate, setSelectedDate] = useState(startOfDay(new Date()));
     const [editingBarberId, setEditingBarberId] = useState<string | null>(null);
+    const [appointments, setAppointments] = useState<Appointment[]>([]);
+    const [currentView, setCurrentView] = useState<'services' | 'appointments'>('services');
 
     // VERSÍCULO DO DIA (Muda 2x ao dia)
     const versiculo = useMemo(() => {
@@ -37,10 +40,11 @@ function App() {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const [barbersRes, historyRes, servicesRes] = await Promise.all([
+                const [barbersRes, historyRes, servicesRes, appointmentsRes] = await Promise.all([
                     fetch(`${API_URL}/barbers`),
                     fetch(`${API_URL}/history`),
-                    fetch(`${API_URL}/servicesState`)
+                    fetch(`${API_URL}/servicesState`),
+                    fetch(`${API_URL}/appointments`)
                 ]);
 
                 if (barbersRes.ok) setBarbers(await barbersRes.json());
@@ -49,6 +53,10 @@ function App() {
                     setHistory(data.map((item: any) => ({ ...item, timestamp: new Date(item.timestamp) })));
                 }
                 if (servicesRes.ok) setServicesState(await servicesRes.json());
+                if (appointmentsRes.ok) {
+                    const data = await appointmentsRes.json();
+                    setAppointments(data.map((item: any) => ({ ...item, scheduledTime: new Date(item.scheduledTime) })));
+                }
             } catch (error) {
                 console.error("Erro ao buscar dados:", error);
             }
@@ -205,6 +213,41 @@ function App() {
         }).catch(console.error);
     };
 
+    // APPOINTMENT HANDLERS
+    const handleCreateAppointment = async (appointmentData: Omit<Appointment, 'id' | 'status'>) => {
+        const newAppointment: Appointment = {
+            ...appointmentData,
+            id: uuidv4(),
+            status: 'scheduled'
+        };
+
+        setAppointments(prev => [...prev, newAppointment]);
+
+        fetch(`${API_URL}/appointments`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(newAppointment)
+        }).catch(console.error);
+    };
+
+    const handleUpdateAppointment = async (id: string, updates: Partial<Appointment>) => {
+        setAppointments(prev => prev.map(apt => apt.id === id ? { ...apt, ...updates } : apt));
+
+        fetch(`${API_URL}/appointments/${id}`, {
+            method: 'PATCH',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(updates)
+        }).catch(console.error);
+    };
+
+    const handleDeleteAppointment = async (id: string) => {
+        setAppointments(prev => prev.filter(apt => apt.id !== id));
+
+        fetch(`${API_URL}/appointments/${id}`, {
+            method: 'DELETE'
+        }).catch(console.error);
+    };
+
     return (
         <div className="min-h-screen bg-slate-950 text-slate-200 font-sans selection:bg-blue-500/30">
             <Cabecalho
@@ -213,42 +256,59 @@ function App() {
                 onPrevDate={() => setSelectedDate(prev => subDays(prev, 1))}
                 onNextDate={() => setSelectedDate(prev => addDays(prev, 1))}
                 onToday={() => setSelectedDate(startOfDay(new Date()))}
+                currentView={currentView}
+                onViewChange={setCurrentView}
+                appointmentCount={appointments.filter(apt =>
+                    apt.status === 'scheduled' &&
+                    startOfDay(new Date(apt.scheduledTime)).getTime() === selectedDate.getTime()
+                ).length}
             />
 
             <main className="max-w-7xl mx-auto px-4 py-6">
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                    {barbers.map(barber => {
-                        const barberHistory = history.filter(h =>
-                            h.barberId === barber.id &&
-                            startOfDay(h.timestamp).getTime() === selectedDate.getTime()
-                        );
-                        const totalRevenue = barberHistory.reduce((acc, item) => acc + item.price, 0);
-                        const barberServices = servicesState[barber.id] || [];
+                {currentView === 'services' ? (
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                        {barbers.map(barber => {
+                            const barberHistory = history.filter(h =>
+                                h.barberId === barber.id &&
+                                startOfDay(h.timestamp).getTime() === selectedDate.getTime()
+                            );
+                            const totalRevenue = barberHistory.reduce((acc, item) => acc + item.price, 0);
+                            const barberServices = servicesState[barber.id] || [];
 
-                        return (
-                            <ColunaBarbeiro
-                                key={barber.id}
-                                barber={barber}
-                                isEditingName={editingBarberId === barber.id}
-                                onToggleEditName={() => setEditingBarberId(editingBarberId === barber.id ? null : barber.id)}
-                                onNameChange={(name) => handleNameChange(barber.id, name)}
-                                barberHistory={barberHistory}
-                                fullHistory={history}
-                                barberServices={barberServices}
-                                selectedDate={selectedDate}
-                                onAddService={handleAddService}
-                                onManualDecrement={handleManualDecrement}
-                                onToggleNavalhado={handleToggleNavalhado}
-                                onPriceChange={handlePriceChange}
-                                onClearHistory={handleClearHistory}
-                                onRemoveHistoryItem={handleRemoveHistoryItem}
-                                onCommissionChange={handleCommissionChange}
-                                onPaymentMethodChange={handlePaymentMethodChange}
-                                totalRevenue={totalRevenue}
-                            />
-                        );
-                    })}
-                </div>
+                            return (
+                                <ColunaBarbeiro
+                                    key={barber.id}
+                                    barber={barber}
+                                    isEditingName={editingBarberId === barber.id}
+                                    onToggleEditName={() => setEditingBarberId(editingBarberId === barber.id ? null : barber.id)}
+                                    onNameChange={(name) => handleNameChange(barber.id, name)}
+                                    barberHistory={barberHistory}
+                                    fullHistory={history}
+                                    barberServices={barberServices}
+                                    selectedDate={selectedDate}
+                                    onAddService={handleAddService}
+                                    onManualDecrement={handleManualDecrement}
+                                    onToggleNavalhado={handleToggleNavalhado}
+                                    onPriceChange={handlePriceChange}
+                                    onClearHistory={handleClearHistory}
+                                    onRemoveHistoryItem={handleRemoveHistoryItem}
+                                    onCommissionChange={handleCommissionChange}
+                                    onPaymentMethodChange={handlePaymentMethodChange}
+                                    totalRevenue={totalRevenue}
+                                />
+                            );
+                        })}
+                    </div>
+                ) : (
+                    <Agendamentos
+                        appointments={appointments}
+                        barbers={barbers}
+                        selectedDate={selectedDate}
+                        onCreateAppointment={handleCreateAppointment}
+                        onUpdateAppointment={handleUpdateAppointment}
+                        onDeleteAppointment={handleDeleteAppointment}
+                    />
+                )}
             </main>
         </div>
     );
