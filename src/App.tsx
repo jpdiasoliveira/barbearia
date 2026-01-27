@@ -26,6 +26,7 @@ function App() {
     const [editingBarberId, setEditingBarberId] = useState<string | null>(null);
     const [appointments, setAppointments] = useState<Appointment[]>([]);
     const [currentView, setCurrentView] = useState<'services' | 'appointments'>('services');
+    const [selectedBarberIndex, setSelectedBarberIndex] = useState(0);
 
     // VERSÍCULO DO DIA (Muda 2x ao dia)
     const versiculo = useMemo(() => {
@@ -248,6 +249,55 @@ function App() {
         }).catch(console.error);
     };
 
+    // BARBER MANAGEMENT HANDLERS
+    const handleAddBarber = async () => {
+        const newBarber: Barber = {
+            id: `barber${Date.now()}`,
+            name: 'Novo Barbeiro',
+            commissionRate: 50
+        };
+
+        setBarbers(prev => [...prev, newBarber]);
+        setSelectedBarberIndex(barbers.length); // Select the new barber
+        setEditingBarberId(newBarber.id); // Auto-edit name
+
+        fetch(`${API_URL}/barbers`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(newBarber)
+        }).catch(console.error);
+    };
+
+    const handleRemoveBarber = async (barberId: string) => {
+        if (barbers.length <= 1) {
+            alert('Você precisa ter pelo menos um barbeiro!');
+            return;
+        }
+
+        if (!confirm('Deseja realmente remover este barbeiro?')) {
+            return;
+        }
+
+        setBarbers(prev => prev.filter(b => b.id !== barberId));
+
+        // Adjust selected index if needed
+        if (selectedBarberIndex >= barbers.length - 1) {
+            setSelectedBarberIndex(Math.max(0, barbers.length - 2));
+        }
+
+        fetch(`${API_URL}/barbers/${barberId}`, {
+            method: 'DELETE'
+        }).catch(console.error);
+    };
+
+    const handlePrevBarber = () => {
+        setSelectedBarberIndex(prev => prev === 0 ? barbers.length - 1 : prev - 1);
+    };
+
+    const handleNextBarber = () => {
+        setSelectedBarberIndex(prev => prev === barbers.length - 1 ? 0 : prev + 1);
+    };
+
     return (
         <div className="min-h-screen bg-slate-950 text-slate-200 font-sans selection:bg-blue-500/30">
             <Cabecalho
@@ -266,8 +316,68 @@ function App() {
 
             <main className="max-w-7xl mx-auto px-4 py-6">
                 {currentView === 'services' ? (
-                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                        {barbers.map(barber => {
+                    <div className="space-y-4">
+                        {/* Barber Navigation Controls */}
+                        <div className="flex items-center justify-between bg-slate-800 rounded-lg p-4 border border-slate-700">
+                            <button
+                                onClick={handlePrevBarber}
+                                className="p-2 bg-slate-700 hover:bg-slate-600 rounded-lg transition-colors"
+                                title="Barbeiro anterior"
+                            >
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                    <polyline points="15 18 9 12 15 6"></polyline>
+                                </svg>
+                            </button>
+
+                            <div className="text-center">
+                                <div className="text-lg font-bold text-slate-100">
+                                    {barbers[selectedBarberIndex]?.name || 'Nenhum barbeiro'}
+                                </div>
+                                <div className="text-sm text-slate-400">
+                                    Barbeiro {selectedBarberIndex + 1} de {barbers.length}
+                                </div>
+                            </div>
+
+                            <button
+                                onClick={handleNextBarber}
+                                className="p-2 bg-slate-700 hover:bg-slate-600 rounded-lg transition-colors"
+                                title="Próximo barbeiro"
+                            >
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                    <polyline points="9 18 15 12 9 6"></polyline>
+                                </svg>
+                            </button>
+                        </div>
+
+                        {/* Add/Remove Barber Buttons */}
+                        <div className="flex gap-3">
+                            <button
+                                onClick={handleAddBarber}
+                                className="flex-1 flex items-center justify-center gap-2 px-4 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors font-medium"
+                            >
+                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                    <line x1="12" y1="5" x2="12" y2="19"></line>
+                                    <line x1="5" y1="12" x2="19" y2="12"></line>
+                                </svg>
+                                Adicionar Barbeiro
+                            </button>
+                            {barbers.length > 1 && (
+                                <button
+                                    onClick={() => handleRemoveBarber(barbers[selectedBarberIndex]?.id)}
+                                    className="px-4 py-3 bg-red-600 hover:bg-red-700 text-white rounded-lg transition-colors font-medium"
+                                    title="Remover barbeiro atual"
+                                >
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                        <polyline points="3 6 5 6 21 6"></polyline>
+                                        <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                                    </svg>
+                                </button>
+                            )}
+                        </div>
+
+                        {/* Current Barber Panel */}
+                        {barbers.length > 0 && barbers[selectedBarberIndex] && (() => {
+                            const barber = barbers[selectedBarberIndex];
                             const barberHistory = history.filter(h =>
                                 h.barberId === barber.id &&
                                 startOfDay(h.timestamp).getTime() === selectedDate.getTime()
@@ -297,7 +407,7 @@ function App() {
                                     totalRevenue={totalRevenue}
                                 />
                             );
-                        })}
+                        })()}
                     </div>
                 ) : (
                     <Agendamentos
