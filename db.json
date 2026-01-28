@@ -4,11 +4,6 @@
       "id": "barber1",
       "name": "João",
       "commissionRate": 50
-    },
-    {
-      "id": "barber2",
-      "name": "Cristian ",
-      "commissionRate": 40
     }
   ],
   "servicesState": {
@@ -289,7 +284,18 @@
       }
     ]
   },
-  "appointments": [],
+  "appointments": [
+    {
+      "id": "5365a3f8-a65c-4294-a0d5-7bdacc325c68",
+      "clientName": "paulo",
+      "clientPhone": "((47) ) 99624-5371",
+      "barberId": "barber1",
+      "serviceType": "Corte",
+      "duration": 30,
+      "scheduledTime": "2026-01-28T17:00:00.000Z",
+      "status": "scheduled"
+    }
+  ],
   "history": [
     {
       "id": "6db87fdd-201e-4ea6-971c-258ad5380500",
@@ -301,7 +307,7 @@
     },
     {
       "id": "e942d683-7833-4ee3-a5d9-56f8a3d589a1",
-      "barberId": "barber2",
+      "barberId": null,
       "serviceName": "Corte",
       "price": 40,
       "timestamp": "2025-12-15T15:43:39.000Z",
@@ -309,7 +315,7 @@
     },
     {
       "id": "872e5654-3dcb-4312-8a46-9ff3d648dfcf",
-      "barberId": "barber2",
+      "barberId": null,
       "serviceName": "Combo",
       "price": 70,
       "timestamp": "2025-12-15T15:43:42.000Z",
@@ -317,7 +323,7 @@
     },
     {
       "id": "f3ab06d2-0919-4029-b9c8-7cbd4228b837",
-      "barberId": "barber2",
+      "barberId": null,
       "serviceName": "Barba",
       "price": 35,
       "timestamp": "2025-12-15T15:43:50.000Z",

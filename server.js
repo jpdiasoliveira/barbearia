@@ -1,16 +1,20 @@
-const jsonServer = require('json-server');
+import jsonServer from 'json-server';
+import express from 'express';
+import path from 'path';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
 const server = jsonServer.create();
 const router = jsonServer.router('db.json');
 const middlewares = jsonServer.defaults();
-const express = require('express');
-const path = require('path');
-
-// Middlewares padrão do JSON Server (logger, static, cors e no-cache)
-// IMPORTANTE: Removemos o static padrão para servir nossa pasta build customizada
-server.use(middlewares);
 
 // Serve arquivos estáticos da build do React
 server.use(express.static(path.join(__dirname, 'dist')));
+
+// Middlewares padrão (logger, static, cors e no-cache)
+server.use(middlewares);
 
 // Configuração para rewrite de rotas da API
 server.use(jsonServer.rewriter({
@@ -24,6 +28,7 @@ server.use(router);
 server.get('*', (req, res) => {
     res.sendFile(path.join(__dirname, 'dist', 'index.html'));
 });
+
 
 // Porta dinâmica (Railway) ou 3000 local
 const port = process.env.PORT || 3000;
