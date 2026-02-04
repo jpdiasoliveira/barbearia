@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { User, Edit2, Check } from 'lucide-react';
 import { format } from 'date-fns';
 import { Barber, HistoryItem, ServiceState, PaymentMethod } from '../tipos';
@@ -6,6 +6,7 @@ import { INITIAL_SERVICES } from '../constantes/servicos';
 import ContadorServico from './ContadorServico';
 import LogHistorico from './LogHistorico';
 import ResumoFinanceiro from './ResumoFinanceiro';
+import ModalServico from './ModalServico';
 
 interface ColunaBarbeiroProps {
     barber: Barber;
@@ -46,6 +47,19 @@ const ColunaBarbeiro: React.FC<ColunaBarbeiroProps> = ({
     onPaymentMethodChange,
     totalRevenue,
 }) => {
+    const [modalOpen, setModalOpen] = useState(false);
+    const [selectedService, setSelectedService] = useState<{ id: string; config: any; state: ServiceState } | null>(null);
+
+    const handleOpenModal = (serviceId: string, serviceConfig: any, state: ServiceState) => {
+        setSelectedService({ id: serviceId, config: serviceConfig, state });
+        setModalOpen(true);
+    };
+
+    const handleCloseModal = () => {
+        setModalOpen(false);
+        setSelectedService(null);
+    };
+
     return (
         <div className="flex flex-col bg-slate-800/30 rounded-2xl border border-slate-700/50 p-4 h-full shadow-xl backdrop-blur-sm">
             {/* NOME DO BARBEIRO */}
@@ -116,6 +130,7 @@ const ColunaBarbeiro: React.FC<ColunaBarbeiroProps> = ({
                                 onPriceChange={(price) => onPriceChange(barber.id, serviceConfig.id, price)}
                                 selectedPaymentMethod={state.selectedPaymentMethod || 'dinheiro'}
                                 onPaymentMethodChange={(method) => onPaymentMethodChange(barber.id, serviceConfig.id, method)}
+                                onClick={() => handleOpenModal(serviceConfig.id, serviceConfig, state)}
                             />
                         );
                     })}
@@ -150,6 +165,28 @@ const ColunaBarbeiro: React.FC<ColunaBarbeiroProps> = ({
                     barberId={barber.id}
                 />
             </div>
+
+            {/* Modal de Serviço */}
+            {selectedService && (
+                <ModalServico
+                    isOpen={modalOpen}
+                    onClose={handleCloseModal}
+                    serviceName={selectedService.config.label}
+                    count={barberHistory.filter(h => h.serviceName === selectedService.config.label).length}
+                    price={selectedService.state.currentPrice}
+                    isNavalhado={selectedService.state.isNavalhado}
+                    allowNavalhado={selectedService.config.allowNavalhado}
+                    isEditable={selectedService.config.isEditable}
+                    selectedPaymentMethod={selectedService.state.selectedPaymentMethod || 'dinheiro'}
+                    onAdd={() => {
+                        onAddService(barber.id, selectedService.id);
+                    }}
+                    onRemove={() => onManualDecrement(barber.id, selectedService.id)}
+                    onToggleNavalhado={() => onToggleNavalhado(barber.id, selectedService.id)}
+                    onPriceChange={(price) => onPriceChange(barber.id, selectedService.id, price)}
+                    onPaymentMethodChange={(method) => onPaymentMethodChange(barber.id, selectedService.id, method)}
+                />
+            )}
         </div>
     );
 };
