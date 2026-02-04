@@ -4,7 +4,7 @@ import { addDays, subDays, startOfDay, isToday, endOfDay } from 'date-fns';
 import { supabase } from './services/supabase';
 
 // Tipos e Constantes
-import { Barber, HistoryItem, ServiceState, PaymentMethod, Appointment } from './tipos';
+import { Barber, HistoryItem, ServiceState, PaymentMethod, Appointment, ServiceConfig } from './tipos';
 import { INITIAL_SERVICES } from './constantes/servicos';
 import { BIBLE_VERSES } from './constantes/versiculos';
 
@@ -13,9 +13,9 @@ import Cabecalho from './componentes/Cabecalho';
 import ColunaBarbeiro from './componentes/ColunaBarbeiro';
 import Agendamentos from './componentes/Agendamentos';
 import Login from './componentes/Login';
+import ConfiguracaoServicos from './componentes/ConfiguracaoServicos';
 
 function App() {
-    // ESTADOS PRINCIPAIS
     const [isAuthenticated, setIsAuthenticated] = useState(false);
     const [barbers, setBarbers] = useState<Barber[]>([]);
     const [history, setHistory] = useState<HistoryItem[]>([]);
@@ -23,8 +23,9 @@ function App() {
     const [selectedDate, setSelectedDate] = useState(startOfDay(new Date()));
     const [editingBarberId, setEditingBarberId] = useState<string | null>(null);
     const [appointments, setAppointments] = useState<Appointment[]>([]);
-    const [currentView, setCurrentView] = useState<'services' | 'appointments'>('services');
+    const [currentView, setCurrentView] = useState<'services' | 'appointments' | 'settings'>('services');
     const [selectedBarberIndex, setSelectedBarberIndex] = useState(0);
+    const [services, setServices] = useState<ServiceConfig[]>(INITIAL_SERVICES);
 
     // VERSÍCULO DO DIA
     const versiculo = useMemo(() => {
@@ -67,7 +68,23 @@ function App() {
             // 3. Fetch Service Configs
             const { data: configsData } = await supabase.from('barber_service_configs').select('*');
 
-            // 4. Appointment
+            // 4. Fetch Services from Database
+            const { data: servicesData } = await supabase.from('services').select('*').order('display_order');
+            if (servicesData && servicesData.length > 0) {
+                const mappedServices: ServiceConfig[] = servicesData.map((s: any) => ({
+                    id: s.id,
+                    label: s.label,
+                    price: Number(s.price),
+                    allowNavalhado: s.allow_navalhado,
+                    isEditable: s.is_editable
+                }));
+                setServices(mappedServices);
+            } else {
+                // Fallback to INITIAL_SERVICES if no data in database
+                setServices(INITIAL_SERVICES);
+            }
+
+            // 5. Fetch Appointments
             const { data: appointmentsData } = await supabase.from('appointments').select('*');
             if (appointmentsData) {
                 const mappedAppointments = appointmentsData.map((item: any) => ({
@@ -82,48 +99,23 @@ function App() {
             }
 
             // RECONSTRUCT SERVICES STATE derived from history + configs
-            if (barbersData && historyData) {
+            if (barbersData && historyData && servicesData) {
                 const newServicesState: Record<string, ServiceState[]> = {};
+
+                const currentServices = servicesData.length > 0 ? servicesData : INITIAL_SERVICES;
 
                 barbersData.forEach((barber: Barber) => {
                     const barberConfigs = configsData?.filter((c: any) => c.barber_id === barber.id) || [];
 
-                    const barberServicesValid = INITIAL_SERVICES.map(serviceInit => {
+                    const barberServicesValid = currentServices.map((serviceInit: any) => {
                         // Find config
                         const config = barberConfigs.find((c: any) => c.service_id === serviceInit.id);
 
-                        // Calculate Count from History for Selected Day
-                        // Note: servicesState is historically structured per barber. 
-                        // The UI relies on `count` inside `servicesState`.
-                        // We must count how many times this service appears in history for this barber on SELECTED DATE.
-                        const count = historyData.filter((h: any) =>
-                            h.barber_id === barber.id &&
-                            h.service_name === serviceInit.label &&
-                            isToday(new Date(h.timestamp)) // Wait, the UI uses `selectedDate` state. 
-                            // BUT this fetchData is inside useEffect which doesn't depend on selectedDate in original code? 
-                            // Ah, original code refetched every 2s.
-                            // If we use real-time or just re-calc, we need selectedDate dependency if we filter here.
-                            // BUT `servicesState` originally tracked "current session" counts? 
-                            // Original: `handleToggleNavalhado` updated `servicesState`.
-
-                            // Let's look closely at `servicesState`. It has `currentPrice`, `count`, `isNavalhado`.
-                            // `count` was incremented manually in original logic?
-                            // No, `setHistory` and then nothing updated `servicesState.count` explicitly in `handleAddService`?????
-                            // Oh wait, `handleAddService` does NOT update `servicesState.count`. 
-                            // It only updates `isNavalhado` (reset).
-                            // So `servicesState.count` in the original code was... useless? or used for display?
-                            // Let's check `ColunaBarbeiro`.
-                            // It uses `barberHistory` passed as prop to count!
-                            // `const count = barberHistory.filter(h => h.serviceName === service.label).length;` inside ColunaBarbeiro?
-                            // No, let's verify `ColunaBarbeiro` implementation.
-                            // If `servicesState` count is ignored, then we safely don't need to populate it accurately.
-                        );
-
                         return {
                             id: serviceInit.id,
-                            count: 0, // Appears unused or derived in UI? We will check.
+                            count: 0,
                             isNavalhado: config?.is_navalhado ?? false,
-                            currentPrice: Number(config?.current_price) || serviceInit.price,
+                            currentPrice: Number(config?.current_price) || Number(serviceInit.price),
                             selectedPaymentMethod: config?.selected_payment_method || 'dinheiro' as PaymentMethod
                         };
                     });
@@ -146,7 +138,7 @@ function App() {
 
     // HANDLERS
     const handleAddService = async (barberId: string, serviceId: string) => {
-        const serviceConfig = INITIAL_SERVICES.find(s => s.id === serviceId);
+        const serviceConfig = services.find(s => s.id === serviceId);
         if (!serviceConfig) return;
 
         const barberServices = servicesState[barberId] || [];
@@ -204,7 +196,7 @@ function App() {
     };
 
     const handleManualDecrement = async (barberId: string, serviceId: string) => {
-        const serviceConfig = INITIAL_SERVICES.find(s => s.id === serviceId);
+        const serviceConfig = services.find(s => s.id === serviceId);
         if (!serviceConfig) return;
 
         // Find last item for this barber/service/date to delete
@@ -404,6 +396,39 @@ function App() {
         setSelectedBarberIndex(prev => prev === barbers.length - 1 ? 0 : prev + 1);
     };
 
+    // SERVICE CONFIGURATION HANDLER
+    const handleUpdateServices = async (updatedServices: ServiceConfig[]) => {
+        // Optimistic update
+        setServices(updatedServices);
+
+        // Sync with database
+        try {
+            // Delete all existing services
+            await supabase.from('services').delete().neq('id', '');
+
+            // Insert updated services with display_order
+            const servicesWithOrder = updatedServices.map((service, index) => ({
+                id: service.id,
+                label: service.label,
+                price: service.price,
+                allow_navalhado: service.allowNavalhado,
+                is_editable: service.isEditable,
+                display_order: index
+            }));
+
+            const { error } = await supabase.from('services').insert(servicesWithOrder);
+
+            if (error) {
+                console.error('Error updating services:', error);
+                // Revert on error
+                fetchData();
+            }
+        } catch (error) {
+            console.error('Error updating services:', error);
+            fetchData();
+        }
+    };
+
     if (!isAuthenticated) {
         return <Login onLogin={() => setIsAuthenticated(true)} />;
     }
@@ -519,7 +544,7 @@ function App() {
                             );
                         })()}
                     </div>
-                ) : (
+                ) : currentView === 'appointments' ? (
                     <Agendamentos
                         appointments={appointments}
                         barbers={barbers}
@@ -527,6 +552,11 @@ function App() {
                         onCreateAppointment={handleCreateAppointment}
                         onUpdateAppointment={handleUpdateAppointment}
                         onDeleteAppointment={handleDeleteAppointment}
+                    />
+                ) : (
+                    <ConfiguracaoServicos
+                        services={services}
+                        onUpdateServices={handleUpdateServices}
                     />
                 )}
             </main>

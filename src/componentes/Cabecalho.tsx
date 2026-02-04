@@ -1,5 +1,5 @@
 import React from 'react';
-import { Scissors, ChevronLeft, ChevronRight, Calendar as CalendarIcon } from 'lucide-react';
+import { Scissors, ChevronLeft, ChevronRight, Calendar as CalendarIcon, Settings } from 'lucide-react';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 
@@ -9,8 +9,8 @@ interface CabecalhoProps {
     onPrevDate: () => void;
     onNextDate: () => void;
     onToday: () => void;
-    currentView: 'services' | 'appointments';
-    onViewChange: (view: 'services' | 'appointments') => void;
+    currentView: 'services' | 'appointments' | 'settings';
+    onViewChange: (view: 'services' | 'appointments' | 'settings') => void;
     appointmentCount?: number;
 }
 
@@ -50,8 +50,8 @@ const Cabecalho: React.FC<CabecalhoProps> = ({
                         <button
                             onClick={() => onViewChange('services')}
                             className={`px-4 py-2 rounded-lg font-medium transition-all ${currentView === 'services'
-                                    ? 'bg-blue-600 text-white shadow-lg shadow-blue-900/30'
-                                    : 'bg-slate-800 text-slate-400 hover:bg-slate-700'
+                                ? 'bg-blue-600 text-white shadow-lg shadow-blue-900/30'
+                                : 'bg-slate-800 text-slate-400 hover:bg-slate-700'
                                 }`}
                         >
                             Serviços
@@ -59,8 +59,8 @@ const Cabecalho: React.FC<CabecalhoProps> = ({
                         <button
                             onClick={() => onViewChange('appointments')}
                             className={`px-4 py-2 rounded-lg font-medium transition-all relative ${currentView === 'appointments'
-                                    ? 'bg-blue-600 text-white shadow-lg shadow-blue-900/30'
-                                    : 'bg-slate-800 text-slate-400 hover:bg-slate-700'
+                                ? 'bg-blue-600 text-white shadow-lg shadow-blue-900/30'
+                                : 'bg-slate-800 text-slate-400 hover:bg-slate-700'
                                 }`}
                         >
                             Agendamentos
@@ -69,6 +69,16 @@ const Cabecalho: React.FC<CabecalhoProps> = ({
                                     {appointmentCount}
                                 </span>
                             )}
+                        </button>
+                        <button
+                            onClick={() => onViewChange('settings')}
+                            className={`p-2 rounded-lg transition-all ${currentView === 'settings'
+                                ? 'bg-blue-600 text-white shadow-lg shadow-blue-900/30'
+                                : 'bg-slate-800 text-slate-400 hover:bg-slate-700'
+                                }`}
+                            title="Configurações"
+                        >
+                            <Settings className="w-5 h-5" />
                         </button>
                     </div>
 
