@@ -17,6 +17,7 @@ const Login: React.FC<LoginProps> = ({ onLogin }) => {
         // Credenciais simples hardcoded para MVP
         // Em produção real, isso seria validado no backend
         if (username === 'admin' && password === 'admin') {
+            localStorage.setItem('isAuthenticated', 'true');
             onLogin();
         } else {
             setError('Usuário ou senha incorretos');

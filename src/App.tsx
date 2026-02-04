@@ -16,7 +16,9 @@ import Login from './componentes/Login';
 import ConfiguracaoServicos from './componentes/ConfiguracaoServicos';
 
 function App() {
-    const [isAuthenticated, setIsAuthenticated] = useState(false);
+    const [isAuthenticated, setIsAuthenticated] = useState(() => {
+        return localStorage.getItem('isAuthenticated') === 'true';
+    });
     const [barbers, setBarbers] = useState<Barber[]>([]);
     const [history, setHistory] = useState<HistoryItem[]>([]);
     const [servicesState, setServicesState] = useState<Record<string, ServiceState[]>>({});
